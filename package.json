@@ -1,0 +1,41 @@
+{
+  "name": "@kwsites/cms-testimonial",
+  "description": "Testimoniala",
+  "version": "1.5.0",
+  "private": false,
+  "author": "Steve King <steve@mydev.co>",
+  "contributors": [
+    {
+      "name": "Steve King",
+      "email": "steve@mydev.co"
+    }
+  ],
+  "scripts": {
+    "preversion": "yarn run test",
+    "postversion": "npm publish --access public && git push && git push --tags",
+    "setup": "cms peers",
+    "test": "yarn run test:unit && yarn run test:integration && yarn run clean:test",
+    "test:integration": "echo 'Integration tests to follow...'",
+    "test:unit": "mocha ./test/unit/**/*.spec.js"
+  },
+  "files": [
+    "index.js",
+    "lib/**/*.*",
+    "public/**/*.less",
+    "public/**/*.js",
+    "views/**/*.*"
+  ],
+  "license": "MIT",
+  "repository": "git://github.com/kwsites/cms-testimonials.git",
+  "peerDependencies": {
+    "lodash": "^4"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@kwsites/cms-build-tools": "^0.1.0",
+    "async": "^2.6.2",
+    "expect.js": "^0.3.1",
+    "mocha": "^6.1.2",
+    "sinon": "^7.3.1"
+  }
+}
