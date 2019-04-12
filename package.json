@@ -1,7 +1,7 @@
 {
   "name": "@kwsites/cms-testimonial",
-  "description": "Testimoniala",
-  "version": "1.5.0",
+  "description": "Testimonials",
+  "version": "0.0.0",
   "private": false,
   "author": "Steve King <steve@mydev.co>",
   "contributors": [
