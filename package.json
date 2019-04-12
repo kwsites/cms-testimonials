@@ -14,7 +14,7 @@
     "preversion": "yarn run test",
     "postversion": "npm publish --access public && git push && git push --tags",
     "setup": "cms peers",
-    "test": "yarn run test:unit && yarn run test:integration && yarn run clean:test",
+    "test": "yarn run test:unit && yarn run test:integration",
     "test:integration": "echo 'Integration tests to follow...'",
     "test:unit": "mocha ./test/unit/**/*.spec.js"
   },
