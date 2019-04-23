@@ -1,5 +1,7 @@
 const _ = require('lodash');
+const {spy} = require('sinon');
 const expect = require('expect.js');
+const {TESTIMONIAL_RATING} = require("../../lib/constants");
 
 describe('main', () => {
 
@@ -37,13 +39,22 @@ describe('main', () => {
       self.afterConstruct(self);
    }
 
+   function givenFindResultsIn (err, data) {
+      self.find = spy((req, query) => ({
+         toArray (callback) {
+            callback(err, data);
+         }
+      }));
+   }
+
    beforeEach(() => {
       unique = 1;
       apos = {
 
          schemas: {
 
-            subset (schema, names) {}
+            subset (schema, names) {
+            }
 
          },
 
@@ -64,7 +75,7 @@ describe('main', () => {
    });
 
    it('uses the targetJoinType option to set the join type', () => {
-      givenTheModuleIsCreated({ targetJoinType: 'foo' });
+      givenTheModuleIsCreated({targetJoinType: 'foo'});
 
       expect(_.find(options.addFields, _.matchesProperty('name', '_target')))
          .to.have.property('withType', 'foo');
@@ -75,6 +86,21 @@ describe('main', () => {
 
       expect(_.find(options.addFields, _.matchesProperty('name', 'published')))
          .to.have.property('def', false);
+   });
+
+   it('finds testimonials for a specific target', () => {
+      givenTheModuleIsCreated();
+      givenFindResultsIn(null, [
+         {[TESTIMONIAL_RATING]: 4},
+         {[TESTIMONIAL_RATING]: 5},
+      ]);
+
+      const handler = spy();
+      self.forTarget({is: 'req'}, 'foo-bar', {is: 'opt'}, handler);
+
+      expect(self.find.calledWith({is: 'req'}, {targetId: 'foo-bar'})).to.be(true);
+      expect(handler.called).to.be(true);
+      expect(handler.firstCall.lastArg).to.have.property('count', 2);
    });
 
 });

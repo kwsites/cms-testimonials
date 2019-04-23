@@ -1,6 +1,8 @@
 const _ = require('lodash');
 
-const { contactField, rangeField, textAreaField, isContactField } = require("./lib/fields");
+const {Testimonial} = require('./lib/testimonial');
+const {TESTIMONIAL_RATING} = require('./lib/constants');
+const {contactField, rangeField, textAreaField, isContactField} = require('./lib/fields');
 
 module.exports = {
    extend: 'apostrophe-pieces',
@@ -17,7 +19,7 @@ module.exports = {
 
    addFields: [
       contactField('Name', 'name'),
-      contactField('Email', 'email'),
+      contactField('Email', 'email', false),
       contactField('Phone', 'tel', false),
 
       // set to false when the user chooses to unsubscribe
@@ -26,11 +28,11 @@ module.exports = {
          type: 'boolean',
          label: 'Subscribe to the blog',
          def: false,
-         // contextualOnly: true,
+         contextualOnly: true,
       },
 
       textAreaField('testimonial-content', 'Testimonial', true),
-      rangeField('testimonial-rating', 'Rating', true),
+      rangeField(TESTIMONIAL_RATING, 'Rating', true),
 
       {
          name: '_target',
@@ -48,7 +50,7 @@ module.exports = {
       {
          label: 'Testimonial',
          name: 'testimonial',
-         fields: ['_target', 'title', 'testimonial-content', 'testimonial-rating'],
+         fields: ['_target', 'title', 'testimonial-content', TESTIMONIAL_RATING],
       },
       {
          label: 'Contact',
@@ -72,6 +74,26 @@ module.exports = {
       _.find(options.addFields, _.matchesProperty('name', '_target')).withType = options.targetJoinType;
       _.find(options.addFields, _.matchesProperty('name', 'published')).def = false;
 
+      /**
+       * Fetch a Testimonial with all detail relating to the supplied targetId
+       */
+      self.forTarget = (req, targetId, opt, callback) => {
+
+         self.find(req, {targetId})
+            .toArray((err, data) => {
+               if (err || !data) {
+                  return callback(err);
+               }
+
+               callback(null, new Testimonial(data));
+            });
+
+      };
+
+      /**
+       * Integration hook - when a new testimonial has been created and a subscription should be created
+       * for the user at the same time, implement this method in your project.
+       */
       self.createSubscriber = function (req, piece, opt, callback) {
          setImmediate(callback);
       };
@@ -109,7 +131,7 @@ module.exports = {
          // TODO: option to update the linked piece with the new
          // TODO: rating if published state is changing
 
-         callback();
+         setImmediate(callback);
       };
    }
 
